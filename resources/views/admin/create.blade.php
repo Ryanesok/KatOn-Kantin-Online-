@@ -7,7 +7,6 @@
 
     <form action="{{ route('admin.menu.store') }}" method="POST">
         @csrf
-        @method('PUT')
         @include('admin.partials.form')
         <div class="form-actions">
             <a href="{{ route('admin.dashboard') }}" class="btn btn-cancel">Batal</a>

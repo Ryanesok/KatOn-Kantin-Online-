@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Pembeli;
 
 use Illuminate\Http\Request;
 use App\Models\Menu;
@@ -14,21 +14,27 @@ class UserMenuController extends Controller
         return view('user.dashboard', compact('menus'));
     }
 
-    public function Order(Request $request, Menu $menu)
+    public function order(Request $request, Menu $menu)
     {
         $request->validate([
-            'jumlah' => 'required|integer|min:1|max:'.$menu->stok,
+            'jumlah' => "required|integer|min:1|max:{$menu->stok}",
         ]);
 
-        Order::create([
-            'user_id' => auth()->user()->id,
-            'menu_id' => $menu->id,
-            'jumlah' => $request->jumlah,
-            'status' => 'pending',
-        ]);
+        if ($menu->stok < 1) {
+            return redirect()->back()->withErrors(['jumlah' => 'Menu tidak tersedia atau stok habis.']);
+        }
 
-        // Kurangi stok menu
-        $menu->decrement('stok', $request->jumlah);
+        DB::transaction(function () use ($request, $menu) {
+            Order::create([
+                'user_id' => auth()->user()->id,
+                'menu_id' => $menu->id,
+                'jumlah' => $request->jumlah,
+                'status' => 'pending',
+            ]);
+
+            // Kurangi stok menu secara atomik
+            $menu->decrement('stok', $request->jumlah);
+        });
 
         return redirect()->route('user.dashboard')->with('success', 'Pesanan berhasil dibuat!');
     }

@@ -23,7 +23,7 @@
             {{-- Pages Around Current --}}
             @for ($i = max(1, $paginator->currentPage() - 2); $i <= min($paginator->lastPage(), $paginator->currentPage() + 2); $i++)
                 @if ($i == $paginator->currentPage())
-                    <span class="px-3 py-1 font-bold bg-black text-white rounded">{{ $i }}</span>
+                    <span class="px-3 py-1 font-bold bg-primary text-on-primary rounded">{{ $i }}</span>
                 @else
                     <a href="{{ $paginator->url($i) }}" class="px-3 py-1 hover:underline">{{ $i }}</a>
                 @endif

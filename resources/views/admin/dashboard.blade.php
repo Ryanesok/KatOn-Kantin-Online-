@@ -17,20 +17,11 @@
         <table>
             <thead>
                 <tr>
-                    @php
-                        function sortable_link($column, $label, $current_sort, $current_order) {
-                            $next_order = ($column == $current_sort && $current_order == 'asc') ? 'desc' : 'asc';
-                            $url = route('admin.dashboard', array_merge(request()->query(), ['sort_by' => $column, 'order' => $next_order]));
-                            $indicator = ($column == $current_sort) ? ($current_order == 'asc' ? ' &#9650;' : ' &#9660;') : '';
-                            return '<a href="' . $url . '">' . $label . $indicator . '</a>';
-                        }
-                    @endphp
-
-                    <th>{!! sortable_link('nama', 'Nama', $current_sort, $current_order) !!}</th>
-                    <th>{!! sortable_link('harga', 'Harga', $current_sort, $current_order) !!}</th>
+                    <th>{!! \App\Helpers\SortHelper::sortableLink('nama', 'Nama', $current_sort, $current_order) !!}</th>
+                    <th>{!! \App\Helpers\SortHelper::sortableLink('harga', 'Harga', $current_sort, $current_order) !!}</th>
                     <th>Stok</th>
                     <th>Status</th>
-                    <th>{!! sortable_link('created_at', 'Waktu Dibuat', $current_sort, $current_order) !!}</th>
+                    <th>{!! \App\Helpers\SortHelper::sortableLink('created_at', 'Waktu Dibuat', $current_sort, $current_order) !!}</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
