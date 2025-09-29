@@ -45,3 +45,8 @@ Route::middleware(['auth', 'role:admin_kantin'])->prefix('admin')->group(functio
     Route::put('/menu/{menu}', [AdminMenuController::class, 'update'])->name('admin.menu.update');
     Route::delete('/menu/{menu}', [AdminMenuController::class, 'destroy'])->name('admin.menu.destroy');
 });
+
+Route::middleware(['auth', 'role:user'])->prefix('user')->group(function () {
+    Route::get('/dashboard', [UserMenuController::class, 'index'])->name('user.dashboard');
+    Route::post('/menu/{menu}/order', [UserMenuController::class, 'order'])->name('user.menu.order');
+});

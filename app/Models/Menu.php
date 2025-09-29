@@ -23,4 +23,9 @@ class Menu extends Model
     {
         return $this->belongsTo(Kantin::class);
     }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

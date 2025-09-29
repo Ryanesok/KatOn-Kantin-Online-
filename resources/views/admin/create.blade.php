@@ -4,8 +4,14 @@
 
 @section('content')
     <h2>Tambah Menu Baru</h2>
+
     <form action="{{ route('admin.menu.store') }}" method="POST">
         @csrf
+        @method('PUT')
         @include('admin.partials.form')
+        <div class="form-actions">
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-cancel">Batal</a>
+            <button type="submit" class="btn btn-primary">Simpan</button>
+        </div>
     </form>
 @endsection

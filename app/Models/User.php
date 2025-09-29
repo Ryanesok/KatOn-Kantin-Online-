@@ -36,4 +36,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Kantin::class);
     }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

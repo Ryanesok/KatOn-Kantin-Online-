@@ -10,11 +10,33 @@ use Illuminate\Support\Facades\Auth;
 class MenuController extends Controller
 {
     // Tampilkan semua menu dari kantin milik admin yang sedang login
-    public function index()
+    public function index(Request $request)
     {
-        $kantinId = Auth::user()->kantin_id;
-        $menus = Menu::where('kantin_id', $kantinId)->get();
-        return view('admin.dashboard', compact('menus'));
+        // 1. Daftar kolom yang valid untuk disortir
+        $sortableColumns = ['nama', 'harga', 'created_at'];
+
+        // 2. Ambil parameter sort & order dari URL, dengan nilai default
+        $sortBy = $request->query('sort_by', 'created_at');
+        $order = $request->query('order', 'desc');
+
+        // 3. Validasi parameter, jika tidak valid, gunakan default
+        if (!in_array($sortBy, $sortableColumns)) {
+            $sortBy = 'created_at';
+        }
+
+        // 4. Ambil data, urutkan, dan bagi per halaman
+        $perPage = request('per_page', 5);
+        $menus = Menu::where('kantin_id', Auth::user()->kantin_id)
+                    ->orderBy($sortBy, $order)
+                    ->paginate($perPage)
+                    ->appends(request()->query()); // Hanya 5 menu per halaman
+
+        // 5. Kirim data ke view
+        return view('admin.dashboard', [
+            'menus' => $menus,
+            'current_sort' => $sortBy,
+            'current_order' => $order,
+        ]);
     }
 
     // Tampilkan form untuk menambah menu baru
