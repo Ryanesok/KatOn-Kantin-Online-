@@ -1,6 +1,5 @@
 <?php
 
-// app/Models/Order.php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -8,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     protected $fillable = [
-        'user_id', 'menu_id', 'quantity', 'total_price', 'status', 'order_date',
+        'user_id', 'menu_id', 'kantin_id', 'quantity', 'total_price', 'status', 'order_date',
     ];
 
     protected $casts = [
@@ -23,5 +22,17 @@ class Order extends Model
     public function menu()
     {
         return $this->belongsTo(Menu::class);
+    }
+
+    public function kantin()
+    {
+        return $this->belongsTo(Kantin::class);
+    }
+
+    public function toppings()
+    {
+        return $this->belongsToMany(Topping::class, 'order_toppings')
+                    ->withPivot('quantity', 'price')
+                    ->withTimestamps();
     }
 }

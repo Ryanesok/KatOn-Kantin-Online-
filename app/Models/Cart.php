@@ -20,4 +20,22 @@ class Cart extends Model
     {
         return $this->belongsTo(Menu::class);
     }
+
+    public function toppings()
+    {
+        return $this->belongsToMany(Topping::class, 'cart_toppings')
+                    ->withPivot('quantity', 'price')
+                    ->withTimestamps();
+    }
+
+    // Helper untuk total harga termasuk toppings
+    public function getTotalPriceAttribute()
+    {
+        $menuTotal = $this->menu->price * $this->quantity;
+        $toppingsTotal = $this->toppings->sum(function ($topping) {
+            return $topping->pivot->price * $topping->pivot->quantity;
+        });
+        
+        return $menuTotal + $toppingsTotal;
+    }
 }
