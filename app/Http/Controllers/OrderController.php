@@ -12,7 +12,7 @@ class OrderController extends Controller
 {
     public function checkout(Request $request)
     {
-        $carts = Cart::with('menu')->where('user_id', auth()->id())->get();
+        $carts = Cart::with(['menu.kantin', 'toppings'])->where('user_id', auth()->id())->get();
 
         if ($carts->isEmpty()) {
             return redirect()->route('user.cart')->with('error', 'Keranjang kosong!');
@@ -24,14 +24,28 @@ class OrderController extends Controller
                     throw new \Exception('Stok ' . $cart->menu->name . ' tidak mencukupi!');
                 }
 
-                Order::create([
+                // Hitung total termasuk toppings
+                $totalPrice = $cart->total_price;
+
+                $order = Order::create([
                     'user_id' => auth()->id(),
                     'menu_id' => $cart->menu_id,
+                    'kantin_id' => $cart->menu->kantin_id, // Tambahkan kantin_id dari menu
                     'quantity' => $cart->quantity,
-                    'total_price' => $cart->menu->price * $cart->quantity,
+                    'total_price' => $totalPrice,
                     'status' => 'Diproses',
                     'order_date' => now(),
                 ]);
+
+                // Attach toppings jika ada
+                if ($cart->toppings->count() > 0) {
+                    foreach ($cart->toppings as $topping) {
+                        $order->toppings()->attach($topping->id, [
+                            'quantity' => $topping->pivot->quantity,
+                            'price' => $topping->pivot->price
+                        ]);
+                    }
+                }
 
                 $cart->menu->decrement('stock', $cart->quantity);
                 $cart->delete();
@@ -43,7 +57,7 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
-        $query = Order::with('menu')->where('user_id', auth()->id());
+        $query = Order::with(['menu.kantin', 'kantin', 'toppings'])->where('user_id', auth()->id());
 
         if ($request->has('search')) {
             $query->whereHas('menu', function ($q) use ($request) {

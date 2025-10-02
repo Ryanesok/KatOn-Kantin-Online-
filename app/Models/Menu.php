@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Menu extends Model
 {
     protected $fillable = [
-        'name', 'description', 'price', 'stock', 'image_path',
+        'name', 'description', 'price', 'stock', 'image_path', 'kantin_id',
     ];
 
     public function orders()
@@ -19,5 +19,15 @@ class Menu extends Model
     public function carts()
     {
         return $this->hasMany(Cart::class);
+    }
+
+    public function kantin()
+    {
+        return $this->belongsTo(Kantin::class);
+    }
+
+    public function toppings()
+    {
+        return $this->belongsToMany(Topping::class, 'menu_toppings');
     }
 }

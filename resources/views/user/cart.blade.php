@@ -49,7 +49,17 @@
                         </div>
                         <div class="col-md-4">
                             <h6 class="fw-bold mb-1">{{ $cart->menu->name }}</h6>
-                            <p class="text-muted small mb-0">Rp {{ number_format($cart->menu->price, 0, ',', '.') }}</p>
+                            <p class="text-muted small mb-1">Rp {{ number_format($cart->menu->price, 0, ',', '.') }}</p>
+                            
+                            @if($cart->toppings->count() > 0)
+                                <div class="small">
+                                    <span class="badge bg-warning text-dark">Toppings:</span>
+                                    @foreach($cart->toppings as $topping)
+                                        <span class="text-muted">{{ $topping->name }} (+Rp {{ number_format($topping->pivot->price, 0, ',', '.') }})</span>
+                                        @if(!$loop->last), @endif
+                                    @endforeach
+                                </div>
+                            @endif
                         </div>
                         <div class="col-md-3">
                             <form action="{{ route('user.cart.update', $cart) }}" method="POST" class="update-cart-form">
@@ -70,7 +80,7 @@
                         </div>
                         <div class="col-md-2 text-end">
                             <p class="fw-bold mb-0">
-                                Rp {{ number_format($cart->menu->price * $cart->quantity, 0, ',', '.') }}
+                                Rp {{ number_format($cart->total_price, 0, ',', '.') }}
                             </p>
                         </div>
                         <div class="col-md-1 text-end">

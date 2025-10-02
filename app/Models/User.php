@@ -9,8 +9,13 @@ class User extends Authenticatable
 {
     use Notifiable;
 
-    protected $fillable = [
-        'name', 'email', 'phone_number', 'password', 'role',
+        protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'phone_number',
+        'role',
+        'kantin_id',
     ];
 
     protected $hidden = [
@@ -33,5 +38,10 @@ class User extends Authenticatable
     public function carts()
     {
         return $this->hasMany(Cart::class);
+    }
+
+    public function kantin()
+    {
+        return $this->belongsTo(Kantin::class);
     }
 }
