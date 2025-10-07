@@ -1,0 +1,26 @@
+# Docker for production memanfaatkan postgre dan nginx dari server
+services:
+  laravel_katon:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_katon
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+    networks:
+      - nginx
+      - postgres
+
+volumes:
+  postgres_data:
+
+networks:
+  nginx:
+    external: true
+  postgres:
+    external: true
